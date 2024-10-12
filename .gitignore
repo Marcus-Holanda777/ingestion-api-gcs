@@ -1,0 +1,6 @@
+*.db
+*.duckdb
+*.xlsx
+*$.xlsx
+__pycache__
+/__pycache__
