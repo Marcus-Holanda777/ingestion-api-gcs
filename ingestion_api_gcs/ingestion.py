@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+from typing import Any
 
 
 class ApiCurrencyError(Exception):
@@ -11,7 +12,7 @@ class ApiCurrencyRequests:
         self.endpoint = endpoint
         self.headers = self.headers()
     
-    def headers(self):
+    def headers(self) -> dict[str, str]:
         return {
             'User-Agent': (
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -23,7 +24,12 @@ class ApiCurrencyRequests:
             'apikey': self.token
         }
 
-    def requests(self, end: str, **kwargs):
+    def requests(
+        self, 
+        end: str, 
+        **kwargs
+    ) -> Any:
+        
         kwargs['headers'] = self.headers
         
         try:
@@ -52,16 +58,20 @@ class Ingestion(ApiCurrencyRequests):
         super().__init__(token, endpoint)
     
     @property
-    def status(self):
+    def status(self) -> Any:
         return self.requests('/status')
     
     def lista_moedas(
         self, 
         currencies: list[str] = []
-    ):
+    ) -> Any:
         
         kwargs = dict()
-        kwargs |= {'params': {'currencies': self.list_join(currencies)}}
+        kwargs |= {
+            'params': {
+                'currencies': self.list_join(currencies)
+            }
+        }
 
         return self.requests('/currencies', **kwargs)
     
@@ -69,7 +79,8 @@ class Ingestion(ApiCurrencyRequests):
         self, 
         base_currency: str = None, 
         currencies: list[str] = []
-    ):
+    ) -> Any:
+        
         kwargs = dict()
         kwargs |= {
             'params': {
@@ -83,9 +94,10 @@ class Ingestion(ApiCurrencyRequests):
     def historico(
         self, 
         date: datetime, 
-        base_currency=None, 
-        currencies=[]
-    ):
+        base_currency: str = None, 
+        currencies: list[str] = []
+    ) -> Any:
+        
         kwargs = dict()
         kwargs |= {
             'params': {
@@ -97,5 +109,5 @@ class Ingestion(ApiCurrencyRequests):
         
         return self.requests('/historical', **kwargs)
     
-    def list_join(self, seq: list[str]):
+    def list_join(self, seq: list[str]) -> str:
         return ','.join(seq)
