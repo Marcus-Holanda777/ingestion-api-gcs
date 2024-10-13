@@ -23,12 +23,12 @@ class ApiCurrencyRequests:
             'apikey': self.token
         }
 
-    def requests(self, start: str, **kwargs):
+    def requests(self, end: str, **kwargs):
         kwargs['headers'] = self.headers
         
         try:
             response =  requests.get(
-                self.endpoint + f'/{start}', 
+                self.endpoint + f'/{end}',
                 **kwargs
             )
 
