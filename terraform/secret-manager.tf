@@ -9,7 +9,7 @@ resource "google_secret_manager_secret" "segredo" {
 
 resource "google_secret_manager_secret_version" "segredo_version" {
   secret      = google_secret_manager_secret.segredo.id
-  secret_data = var.default_key
+  secret_data = base64encode("${var.default_key}")
 }
 
 resource "google_secret_manager_secret_iam_member" "segredo_access" {

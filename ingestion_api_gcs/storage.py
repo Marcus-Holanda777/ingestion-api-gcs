@@ -1,32 +1,20 @@
-from google.cloud.storage import Client, Blob
+from google.cloud.storage import (
+    Client, 
+    Blob
+)
 import json
-import os
 from typing import Any
+from cred import Cred, GsClient
 
 
-class Storage:
+class Storage(Cred):
     def __init__(
         self, 
+        client: GsClient = Client,
         credentials: str = None
     ) -> None:
         
-        self.credentials = credentials
-    
-    def __get_cliente(self) -> Client:
-        if self.credentials:
-
-            if all(
-                [
-                    os.path.isfile(self.credentials),
-                    self.credentials.endswith('.json')
-                ]
-            ):
-               return Client.from_service_account_json(self.credentials)
-
-            json_loads = json.loads(self.credentials)
-            return Client.from_service_account_info(json_loads)
-        
-        return Client()
+        super().__init__(client, credentials)
 
     def upload_json_memory(
         self,
@@ -35,7 +23,7 @@ class Storage:
         blob_name: str
     ) -> Blob:
         
-        cliente = self.__get_cliente()
+        cliente = self.get_cliente()
         bucket = cliente.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
 
