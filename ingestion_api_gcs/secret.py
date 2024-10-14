@@ -20,9 +20,17 @@ class Secret(Cred):
     ) -> None:
         
         super().__init__(client, credentials)
-        self.name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+        self.project_id = project_id
+        self.secret_id = secret_id
+        self.version_id = version_id
     
     def access_secret_version(self) -> AccessSecretVersionResponse:
+
+        self.name = (
+            f"projects/{self.project_id}"
+            f"/secrets/{self.secret_id}"
+            f"/versions/{self.version_id}"
+        )
         
         client = self.get_cliente()
         response = client.access_secret_version(request={"name": self.name})
