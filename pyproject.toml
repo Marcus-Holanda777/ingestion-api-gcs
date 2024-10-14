@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 pytest = "^8.3.3"
 requests = "^2.32.3"
+google-cloud-storage = "^2.18.2"
 
 
 [build-system]

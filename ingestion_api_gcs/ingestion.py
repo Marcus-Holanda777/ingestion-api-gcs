@@ -89,7 +89,7 @@ class Ingestion(ApiCurrencyRequests):
             }
         }
 
-        return self.requests('/currencies', **kwargs)
+        return self.requests('/latest', **kwargs)
     
     def historico(
         self, 
