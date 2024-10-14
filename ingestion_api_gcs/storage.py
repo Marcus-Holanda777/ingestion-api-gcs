@@ -1,10 +1,15 @@
 from google.cloud.storage import Client, Blob
 import json
 import os
+from typing import Any
 
 
 class Storage:
-    def __init__(self, credentials = None) -> None:
+    def __init__(
+        self, 
+        credentials: str = None
+    ) -> None:
+        
         self.credentials = credentials
     
     def __get_cliente(self) -> Client:
@@ -25,7 +30,7 @@ class Storage:
 
     def upload_json_memory(
         self,
-        data,
+        data: Any,
         bucket_name: str,
         blob_name: str
     ) -> Blob:
