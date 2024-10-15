@@ -422,7 +422,7 @@ resource "google_cloud_scheduler_job" "job" {
 
 Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com os arquivos do terraform. E executar uma série de comandos.
 
-> [!NOTE]
+> [!WARNING]
 > Segue link de instalação do [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
 1. **`terraform init`**: 
@@ -440,7 +440,8 @@ Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com
 5. **`terraform apply -auto-approve`**: 
    - Aplica as alterações necessárias para atingir o estado desejado da configuração. A flag `-auto-approve` ignora o prompt de aprovação interativa, permitindo que o comando seja executado sem esperar pela confirmação do usuário.
 
-Caso queira reverter tudo que foi feito pode ser usado o comando:
+> [!TIP]
+> Caso queira reverter tudo que foi feito pode ser usado o comando:
 
 - **`terraform destroy`**: 
   - Este comando é utilizado para destruir todos os recursos gerenciados pelo Terraform em uma configuração. Ele remove todos os recursos especificados na configuração do Terraform, revertendo a infraestrutura ao estado inicial (ou seja, sem recursos provisionados). Antes de executar o comando, o Terraform mostrará um plano de execução que detalha quais recursos serão destruídos. Você pode usar a flag `-auto-approve` para evitar a confirmação interativa, mas é recomendado revisar o plano antes de proceder, pois a destruição é irreversível.
