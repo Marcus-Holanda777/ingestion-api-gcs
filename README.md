@@ -22,6 +22,7 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 ![Arquitetura do projeto que será construído](imagens/arquitetura_ingestao_por_api_cloud.png)
 
 ## Ingestão dos dados
+![code](ingestion_api_gcs/ingestion.py)
 
 A ingestão dos dados é feita por meio da classe `Ingestion` que é uma especialização da classe `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints da API [Free Currency](https://freecurrencyapi.com). Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
 
@@ -83,3 +84,7 @@ taxas = api_ingestion.taxa_cambio(base_currency='USD', currencies=['EUR', 'BRL']
 # Consultando o histórico de câmbio para uma data específica
 historico = api_ingestion.historico(date=datetime(2023, 1, 1), base_currency='USD', currencies=['EUR'])
 ```
+
+## Acessando segredos e exportando os dados para o Storage do Google Cloud
+
+Para acessar a API precisamos de um token. Esse token é fornecido logo após o cadastro feito na plataforma [Free Currency](https://freecurrencyapi.com). 
