@@ -20,3 +20,61 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 
 ## Arquitetura
 ![Arquitetura do projeto que será construído](imagens/arquitetura_ingestao_por_api_cloud.png)
+
+## Ingestão dos dados
+
+A classe `Ingestion` é uma especialização de `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints de uma API de câmbio de moedas. Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
+
+### Principais Responsabilidades e Métodos
+
+### 1. Inicialização (`__init__`)
+- A classe é inicializada com um `token` de autenticação para a API e um `endpoint` que define a URL base (por padrão, `'https://api.freecurrencyapi.com/v1'`).
+- Ela chama o construtor da classe pai (`ApiCurrencyRequests`) para configurar esses parâmetros e preparar os cabeçalhos da requisição.
+
+### 2. Métodos para Acessar Dados
+
+- **`status`**: 
+  - Retorna o status da API, útil para verificar se a API está operacional.
+  - Faz uma requisição ao endpoint `/status`.
+
+- **`lista_moedas`**: 
+  - Lista as moedas disponíveis na API.
+  - Opcionalmente, você pode filtrar por moedas específicas, passando uma lista de códigos de moedas (por exemplo, `['USD', 'EUR']`).
+  - Utiliza o endpoint `/currencies`.
+
+- **`taxa_cambio`**: 
+  - Obtém as taxas de câmbio mais recentes com base em uma moeda específica (`base_currency`).
+  - Também permite listar moedas específicas para comparar taxas.
+  - Faz uma requisição ao endpoint `/latest`.
+
+- **`historico`**: 
+  - Retorna o histórico de taxas de câmbio para uma data específica (`date`).
+  - Você pode especificar uma moeda base e uma lista de moedas para filtrar os dados.
+  - Esse método faz uma requisição ao endpoint `/historical`.
+
+### 3. Método Auxiliar
+
+- **`list_join`**: 
+  - Converte uma lista de moedas (por exemplo, `['USD', 'EUR']`) em uma string separada por vírgulas (`'USD,EUR'`).
+  - Isso é útil para construir os parâmetros de consulta necessários para as requisições da API.
+
+## Exemplo de Uso
+
+Com a classe `Ingestion`, você pode facilmente obter informações de câmbio e manipular esses dados de forma programática. Por exemplo:
+
+```python
+# Criando uma instância da classe
+api_ingestion = Ingestion(token='seu_token_api')
+
+# Obtendo o status da API
+status = api_ingestion.status
+
+# Listando moedas
+moedas = api_ingestion.lista_moedas(['USD', 'EUR', 'BRL'])
+
+# Obtendo taxas de câmbio mais recentes para USD
+taxas = api_ingestion.taxa_cambio(base_currency='USD', currencies=['EUR', 'BRL'])
+
+# Consultando o histórico de câmbio para uma data específica
+historico = api_ingestion.historico(date=datetime(2023, 1, 1), base_currency='USD', currencies=['EUR'])
+```
