@@ -420,15 +420,27 @@ resource "google_cloud_scheduler_job" "job" {
 
 ### Deploy da infraestrutura
 
-Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com os arquivos do terraform. O primeiro comando a ser executado é o `terraform init` que baixa todos os provedores e plugins necessários.
+Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com os arquivos do terraform. E executar uma série de comandos.
 
 > [!NOTE]
 > Segue link de instalação do [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
-```bash
-> terraform init
-> terraform fmt
-> terraform validate
-> terraform plan
-> terraform apply -auto-approve
-```
+1. **`terraform init`**: 
+   - Inicializa um diretório de trabalho do Terraform, fazendo o download dos plugins de provedores necessários e configurando o backend (se houver). Este comando deve ser executado antes de qualquer outro comando do Terraform.
+
+2. **`terraform fmt`**: 
+   - Formata seus arquivos de configuração do Terraform para um formato e estilo canônicos. Ajuda a garantir que seus arquivos de configuração sejam consistentes e legíveis.
+
+3. **`terraform validate`**: 
+   - Valida os arquivos de configuração em um diretório, verificando erros de sintaxe e garantindo que todos os argumentos necessários estejam presentes. Este comando não se conecta a nenhum provedor de nuvem.
+
+4. **`terraform plan`**: 
+   - Cria um plano de execução, mostrando quais ações o Terraform tomará para alcançar o estado desejado definido em seus arquivos de configuração. Este comando não faz nenhuma alteração, mas permite que você revise o que acontecerá.
+
+5. **`terraform apply -auto-approve`**: 
+   - Aplica as alterações necessárias para atingir o estado desejado da configuração. A flag `-auto-approve` ignora o prompt de aprovação interativa, permitindo que o comando seja executado sem esperar pela confirmação do usuário.
+
+Caso queira reverter tudo que foi feito pode ser usado o comando:
+
+- **`terraform destroy`**: 
+  - Este comando é utilizado para destruir todos os recursos gerenciados pelo Terraform em uma configuração. Ele remove todos os recursos especificados na configuração do Terraform, revertendo a infraestrutura ao estado inicial (ou seja, sem recursos provisionados). Antes de executar o comando, o Terraform mostrará um plano de execução que detalha quais recursos serão destruídos. Você pode usar a flag `-auto-approve` para evitar a confirmação interativa, mas é recomendado revisar o plano antes de proceder, pois a destruição é irreversível.
