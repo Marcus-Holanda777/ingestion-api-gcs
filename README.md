@@ -21,7 +21,11 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 ## Arquitetura
 ![Arquitetura do projeto que será construído](imagens/arquitetura_ingestao_por_api_cloud.png)
 
-## [Ingestão dos dados](ingestion_api_gcs/ingestion.py) 🔗
+## Estrutura de pastas
+
+![Pastas](imagens/pastas.png)
+
+## [Ingestão dos dados](ingestion_api_gcs/ingestion.py)
 
 A ingestão dos dados é feita por meio da classe `Ingestion` que é uma especialização da classe `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints da API [Free Currency](https://freecurrencyapi.com). Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
 
@@ -84,6 +88,9 @@ taxas = api_ingestion.taxa_cambio(base_currency='USD', currencies=['EUR', 'BRL']
 historico = api_ingestion.historico(date=datetime(2023, 1, 1), base_currency='USD', currencies=['EUR'])
 ```
 
-## Acessando segredos e exportando os dados para o Storage do Google Cloud
+## [Acessando segredos](ingestion_api_gcs/secret.py)
 
-Para acessar a API precisamos de um token. Esse token é fornecido logo após o cadastro feito na plataforma [Free Currency](https://freecurrencyapi.com). 
+Para acessar a API precisamos de um token. Esse token é fornecido logo após o cadastro feito na plataforma [Free Currency](https://freecurrencyapi.com).
+Como se trata de um dado sensível precisamos acessar e armazenar o token de forma segura. Com verificações de integridade, e garantia de que os valores lidos não sejam corrompidos ou comprometidos.
+
+A classe `Secret` serve para acessar e verificar segredos armazenados no Google Cloud Secret Manager. Ela utiliza a biblioteca google.cloud.secretmanager para interagir com o serviço de gerenciamento de segredos da Google Cloud Platform
