@@ -103,3 +103,25 @@ A classe `Secret` permite acessar de forma segura segredos armazenados no Google
 - **Acesso seguro:** Verificação de integridade dos dados usando CRC32C para garantir que o valor do segredo não foi corrompido durante a transferência.
 - **Extensível:** A classe herda de `Cred`, permitindo flexibilidade na configuração de clientes personalizados ou credenciais.
 - **Fácil de usar:** Recupera o valor do segredo em texto puro, pronto para uso.
+
+### Exemplo de Uso
+
+Para acessar um segredo armazenado no Google Cloud Secret Manager, basta instanciar a classe `Secret` com o `project_id`, `secret_id`, e a `version_id` do segredo (a versão é opcional e, por padrão, é definida como `1`). O exemplo abaixo demonstra como recuperar o valor de um segredo:
+
+```python
+# Importa a classe Secret do módulo onde ela está definida
+from secret import Secret
+
+# Define os parâmetros do projeto e do segredo
+project_id = 'project_id'
+secret_id = 'secret_id'
+
+# Instancia a classe Secret com o ID do projeto e o ID do segredo
+secret_client = Secret(project_id=project_id, secret_id=secret_id)
+
+# Recupera o valor do segredo
+secret_value = secret_client.access_secret_version()
+
+# Exibe o valor do segredo
+print(secret_value)
+```
