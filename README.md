@@ -25,6 +25,11 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 
 A classe `Ingestion` é uma especialização de `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints de uma API de câmbio de moedas. Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
 
+> [!WARNING]
+> Na classe `ApiCurrencyRequests` existe a função `headers` ela é essencial para definir os cabeçalhos HTTP. 
+> Que autenticam e configuram corretamente as requisições à API. 
+> Estes cabeçalhos contêm informações críticas que afetam o comportamento da API em relação ao cliente.
+
 ### Principais Responsabilidades e Métodos
 
 ### 1. Inicialização (`__init__`)
@@ -58,7 +63,7 @@ A classe `Ingestion` é uma especialização de `ApiCurrencyRequests` que fornec
   - Converte uma lista de moedas (por exemplo, `['USD', 'EUR']`) em uma string separada por vírgulas (`'USD,EUR'`).
   - Isso é útil para construir os parâmetros de consulta necessários para as requisições da API.
 
-## Exemplo de Uso
+### Exemplo de Uso
 
 Com a classe `Ingestion`, você pode facilmente obter informações de câmbio e manipular esses dados de forma programática. Por exemplo:
 
