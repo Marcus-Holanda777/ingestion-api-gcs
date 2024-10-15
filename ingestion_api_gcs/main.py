@@ -3,7 +3,6 @@ from storage import Storage
 from ingestion import Ingestion
 import os
 from datetime import datetime
-import json
 
 
 project_id = os.getenv('project_id')

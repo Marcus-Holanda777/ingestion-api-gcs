@@ -445,3 +445,55 @@ Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com
 
 - **`terraform destroy`**: 
   - Este comando é utilizado para destruir todos os recursos gerenciados pelo Terraform em uma configuração. Ele remove todos os recursos especificados na configuração do Terraform, revertendo a infraestrutura ao estado inicial (ou seja, sem recursos provisionados). Antes de executar o comando, o Terraform mostrará um plano de execução que detalha quais recursos serão destruídos. Você pode usar a flag `-auto-approve` para evitar a confirmação interativa, mas é recomendado revisar o plano antes de proceder, pois a destruição é irreversível.
+
+### Função Python - Cloud Function
+
+A função `insert_json` do arquivo `ingestion_api_gcs/main.py` é uma trigger HTTP que realiza todas as tarefas do projeto.
+
+1. **Autenticação**:
+   - Recupera um token de acesso à API e as credenciais de serviço a partir do Google Secret Manager.
+
+2. **Ingestão de Dados**:
+   - Conecta-se a uma API externa para obter dados de taxa de câmbio com a moeda base definida como BRL.
+
+3. **Upload para Google Cloud Storage**:
+   - Salva os dados obtidos em um bucket no Google Cloud Storage, com o nome de arquivo baseado na data e hora atuais.
+
+A função automatiza a ingestão e armazenamento de dados de câmbio, utilizando recursos do Google Cloud, como Secret Manager e Cloud Storage.
+
+```python
+from secret import Secret
+from storage import Storage
+from ingestion import Ingestion
+import os
+from datetime import datetime
+
+
+project_id = os.getenv('project_id')
+secret_id = os.getenv('secret_id')
+bucket_name = os.getenv('bucket_name')
+secret_id_json = os.getenv('secret_id_json')
+
+
+def insert_json(request):
+    
+    # NOTE: Retorna TOKEN de acesso a API
+    segredo = Secret(project_id, secret_id)
+    token = segredo.access_secret_version()
+
+    # NOTE: Retorna JSON file credencials
+    segredo.secret_id = secret_id_json
+    creds = segredo.access_secret_version()
+
+    # NOTE: Download do arquivo -- moeda BRL
+    # em relacao as outras moedas
+    api_ingestion = Ingestion(token)
+    data = api_ingestion.taxa_cambio(base_currency='BRL')
+
+    # NOTE: Enviar os dados para o bucket
+    bucket = Storage(credentials=creds)
+    file_to = f'{datetime.now():%Y%m%d_%H%M}'
+    bucket.upload_json_memory(data, bucket_name, f'raw/{file_to}')
+
+    return "OK"
+```
