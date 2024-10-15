@@ -94,6 +94,12 @@ historico = api_ingestion.historico(date=datetime(2023, 1, 1), base_currency='US
 ## [Acessando segredos](ingestion_api_gcs/secret.py)
 
 Para acessar a API precisamos de um token. Esse token é fornecido logo após o cadastro feito na plataforma [Free Currency](https://freecurrencyapi.com).
-Como se trata de um dado sensível precisamos acessar e armazenar o token de forma segura. Com verificações de integridade, e garantia de que os valores lidos não sejam corrompidos ou comprometidos.
+Como se trata de um dado sensível precisamos acessar e armazenar o token de forma segura, com verificações de integridade e garantia de que os valores lidos não sejam corrompidos ou comprometidos.
 
-A classe `Secret` serve para acessar e verificar segredos armazenados no Google Cloud Secret Manager. Ela utiliza a biblioteca google.cloud.secretmanager para interagir com o serviço de gerenciamento de segredos da Google Cloud Platform
+A classe `Secret` permite acessar de forma segura segredos armazenados no Google Cloud Secret Manager. Essa classe é útil para recuperar informações confidenciais, como tokens de API, chaves e outras credenciais, usando a biblioteca Python do Google Cloud. Tanto o token de acesso da API como as credenciais da conta de serviço, foram armazenadas no Secret Manager, garantindo uma camada extra de segurança, já que ambos os dados sensíveis estão protegidos.
+
+### Funcionalidades
+
+- **Acesso seguro:** Verificação de integridade dos dados usando CRC32C para garantir que o valor do segredo não foi corrompido durante a transferência.
+- **Extensível:** A classe herda de `Cred`, permitindo flexibilidade na configuração de clientes personalizados ou credenciais.
+- **Fácil de usar:** Recupera o valor do segredo em texto puro, pronto para uso.
