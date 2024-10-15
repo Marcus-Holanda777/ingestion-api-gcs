@@ -259,7 +259,7 @@ resource "local_file" "bucket_account_key_file" {
 
 - `secret-manager.tf` cria os segredos para armazenar com segurança, o token da API e a chave com as credencials de acesso da conta de serviço. Assim como da a permissão de acesso a conta de serviço aos segredos.
 
-```
+```terraform
 resource "google_secret_manager_secret" "segredo" {
   project   = var.project_id
   secret_id = var.id_secret
@@ -386,6 +386,34 @@ resource "google_cloudfunctions_function_iam_member" "invoker" {
   depends_on = [
     google_cloudfunctions_function.Cloud_function,
     google_service_account.bucket_account,
+  ]
+}
+```
+
+- `cloud-sched.tf` essa configuração cria um job no Cloud Scheduler que invoca a função do Google Cloud diariamente às 6:00 AM, utilizando autenticação OIDC com a conta de serviço associada a todos os outros recursos.
+
+```terraform
+resource "google_cloud_scheduler_job" "job" {
+  name             = "${var.bucket_name}-job"
+  project          = var.project_id
+  region           = var.region
+  description      = "trabalho api currency"
+  schedule         = "0 6 * * *"
+  time_zone        = "America/Fortaleza"
+  attempt_deadline = "320s"
+
+  http_target {
+    http_method = "POST"
+    uri         = google_cloudfunctions_function.Cloud_function.https_trigger_url
+
+    oidc_token {
+      service_account_email = google_service_account.bucket_account.email
+    }
+  }
+
+  depends_on = [
+    google_cloudfunctions_function.Cloud_function,
+    google_service_account.bucket_account
   ]
 }
 ```
