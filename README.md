@@ -213,6 +213,13 @@ variable "default_key" {
 
 - `provider.tf` Para declarar a conexão com o provedor do Google no Terraform, você precisa especificar o bloco provider no seu arquivo de configuração do Terraform
 
+> [!WARNING]
+> Para usar o terraform com o Google Cloud, antes é preciso instalar e configurar o [gcloud CLI](https://cloud.google.com/sdk/docs/install?hl=pt-br)
+> e configurar a autenticacão no terminal com o comando: 
+> ```
+> gcloud auth aplicativo-default login
+> ```
+
 ```terraform
 
 terraform {
