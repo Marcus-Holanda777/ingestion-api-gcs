@@ -177,6 +177,43 @@ Toda a infraestrutura do projeto em nuvem, foi configurado e gerenciado pelo ter
 
 Os recusros necessarios para criar o projeto são: Cloud Storage, Secret Manager, Service Account, Scheduler Jobs e Cloud Fuction. Abaixo uma explicação sobre cada arquivo criado e usado pelo terraform para a criação do ambiente em nuvem.
 
+> `variables.tf` 
+> é usado para definir variáveis que podem ser utilizadas em sua configuração. 
+> Ele permite que você torne sua infraestrutura mais flexível e reutilizável, 
+> separando os valores das configurações de sua infraestrutura
+
+```terraform
+variable "project_id" {
+  type    = string
+  default = "valor-projeto"
+}
+
+variable "region" {
+  type    = string
+  default = "valor-region"
+}
+
+variable "bucket_name" {
+  type    = string
+  default = "valor-bucket-name"
+}
+
+variable "id_secret" {
+  type    = string
+  default = "valor-segredo-api"
+}
+
+variable "id_secret_json" {
+  type    = string
+  default = "valor-segredo-credenciais"
+}
+
+variable "default_key" {
+  type    = string
+  default = "valor-chave-api"
+}
+```
+
 - `provider.tf`
 
 ```terraform
