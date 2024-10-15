@@ -170,3 +170,28 @@ print(f"JSON uploaded to: gs://{bucket_name}/{blob_name}")
 > garantindo que as operações realizadas nesses serviços sejam seguras e que o código permaneça limpo e reutilizável.
 
 ## [Infraestrutura - Terraform](terraform)
+
+Toda a infraestrutura do projeto em nuvem, foi configurado e gerenciado pelo terraform. O Terraform é uma ferramenta de código aberto que permite criar, alterar e versionar infraestrutura de nuvem de forma segura e eficiente. Ela é uma das ferramentas de IaC (Infrastructure-as-Code) mais populares e é usada para gerenciar infraestrutura em nuvens públicas, privadas e serviços SaaS.
+
+### Recursos implatados com o terraform
+
+Os recusros necessarios para criar o projeto são: Cloud Storage, Secret Manager, Service Account, Scheduler Jobs e Cloud Fuction. Abaixo uma explicação sobre cada arquivo criado e usado pelo terraform para a criação do ambiente em nuvem.
+
+- `provider.tf`
+
+```terraform
+
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "6.6.0"
+    }
+  }
+}
+
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+```
