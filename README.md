@@ -21,8 +21,7 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 ## Arquitetura
 ![Arquitetura do projeto que será construído](imagens/arquitetura_ingestao_por_api_cloud.png)
 
-## Ingestão dos dados
-![code](ingestion_api_gcs/ingestion.py)
+## [Ingestão dos dados](ingestion_api_gcs/ingestion.py) 🔗
 
 A ingestão dos dados é feita por meio da classe `Ingestion` que é uma especialização da classe `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints da API [Free Currency](https://freecurrencyapi.com). Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
 
