@@ -164,7 +164,9 @@ print(f"JSON uploaded to: gs://{bucket_name}/{blob_name}")
 ```
 
 > [!IMPORTANT]
-> A classe Cred desempenha um papel fundamental em ambas as classes Storage e Secret porque ela centraliza a gestão de autenticação
+> A classe `Cred` desempenha um papel fundamental em ambas as classes `Storage` e `Secret` porque ela centraliza a gestão de autenticação
 > e credenciais ao interagir com os serviços da Google Cloud, como o Secret Manager e o Cloud Storage. 
 > Essa classe encapsula a lógica de como as credenciais são gerenciadas e utilizadas para criar clientes autenticados, 
 > garantindo que as operações realizadas nesses serviços sejam seguras e que o código permaneça limpo e reutilizável.
+
+## [Infraestrutura - Terraform](terraform)
