@@ -236,3 +236,156 @@ provider "google" {
   region  = var.region
 }
 ```
+
+- `service-account.tf` todo o projeto sera vinculado a uma única conta de serviço, o arquivo cria a conta, adiciona uma chave e exporta a mesma para um arquivo .json que sera usada pelos outros serviços.
+
+```terraform
+resource "google_service_account" "bucket_account" {
+  account_id   = "${var.bucket_name}-${var.project_id}"
+  display_name = "trabalho api currency"
+}
+
+resource "google_service_account_key" "bucket_account_key" {
+  service_account_id = google_service_account.bucket_account.name
+  public_key_type    = "TYPE_X509_PEM_FILE"
+  private_key_type   = "TYPE_GOOGLE_CREDENTIALS_FILE"
+}
+
+resource "local_file" "bucket_account_key_file" {
+  content  = base64decode(google_service_account_key.bucket_account_key.private_key)
+  filename = "${path.module}/service_account_key.json"
+}
+```
+
+- `secret-manager.tf` cria os segredos para armazenar com segurança, o token da API e a chave com as credencials de acesso da conta de serviço. Assim como da a permissão de acesso a conta de serviço aos segredos.
+
+```
+resource "google_secret_manager_secret" "segredo" {
+  project   = var.project_id
+  secret_id = var.id_secret
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "segredo_version" {
+  secret      = google_secret_manager_secret.segredo.id
+  secret_data = var.default_key
+}
+
+resource "google_secret_manager_secret_iam_member" "segredo_access" {
+  secret_id = google_secret_manager_secret.segredo.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.bucket_account.email}"
+}
+
+resource "google_secret_manager_secret" "key_account" {
+  project   = var.project_id
+  secret_id = var.id_secret_json
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "key_account_version" {
+  secret      = google_secret_manager_secret.key_account.id
+  secret_data = base64decode(google_service_account_key.bucket_account_key.private_key)
+}
+
+resource "google_secret_manager_secret_iam_member" "key_account_access" {
+  secret_id = google_secret_manager_secret.key_account.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.bucket_account.email}"
+}
+```
+
+- `storage-bucket.tf` são criados dois buckets um para armazenar os dados da API e outro para guardar o código fonte Python da Cloud Function. A permissão de admin é concedida para a conta de serviço ao bucket referente aos dados da API.
+
+```terraform
+resource "google_storage_bucket" "storage_api" {
+  name          = var.bucket_name
+  location      = var.region
+  project       = var.project_id
+  force_destroy = true
+
+  storage_class            = "STANDARD"
+  public_access_prevention = "enforced"
+}
+
+resource "google_storage_bucket" "function_api" {
+  name          = "${var.bucket_name}-function"
+  location      = var.region
+  project       = var.project_id
+  force_destroy = true
+
+  public_access_prevention = "enforced"
+}
+
+resource "google_storage_bucket_iam_member" "bucket_access" {
+  bucket = google_storage_bucket.storage_api.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.bucket_account.email}"
+}
+```
+
+- `cloud-function.tf` provisiona a Cloud Function onde o gatilho é um requisição HTTP. Começa criando um arquivo ZIP com o codigo fonte Python da função em nuvem, depois exporta para o bucket especializado para armazenar o codigo associado a função. A Cloud Function é criada com base no arquivo ZIP e associada a conta de serviço que é compartilhada entre todos os recursos. Algumas variáveis de ambiente são adicionadas, pois serão utilizadas para executar a função. Também é concedido a conta de serviço permissão para invocar a função.
+
+```terraform
+data "archive_file" "source" {
+  type        = "zip"
+  source_dir  = "../ingestion_api_gcs"
+  output_path = "${path.module}/function.zip"
+}
+
+resource "google_storage_bucket_object" "zip" {
+  source       = data.archive_file.source.output_path
+  content_type = "application/zip"
+  name         = "src-${data.archive_file.source.output_md5}.zip"
+  bucket       = google_storage_bucket.function_api.name
+  depends_on = [
+    google_storage_bucket.function_api,
+    data.archive_file.source
+  ]
+}
+
+resource "google_cloudfunctions_function" "Cloud_function" {
+  name                  = "${var.bucket_name}-cloud-function"
+  description           = "trabalho api currency"
+  runtime               = "python311"
+  project               = var.project_id
+  region                = var.region
+  source_archive_bucket = google_storage_bucket.function_api.name
+  source_archive_object = google_storage_bucket_object.zip.name
+  trigger_http          = true
+  entry_point           = "insert_json"
+  service_account_email = google_service_account.bucket_account.email
+
+  environment_variables = {
+    project_id     = "${var.project_id}"
+    secret_id      = "${var.id_secret}"
+    bucket_name    = "${var.bucket_name}"
+    secret_id_json = "${var.id_secret_json}"
+  }
+
+  depends_on = [
+    google_storage_bucket.function_api,
+    google_storage_bucket_object.zip,
+  ]
+}
+
+resource "google_cloudfunctions_function_iam_member" "invoker" {
+  project        = google_cloudfunctions_function.Cloud_function.project
+  region         = google_cloudfunctions_function.Cloud_function.region
+  cloud_function = google_cloudfunctions_function.Cloud_function.name
+
+  role   = "roles/cloudfunctions.invoker"
+  member = "serviceAccount:${google_service_account.bucket_account.email}"
+
+  depends_on = [
+    google_cloudfunctions_function.Cloud_function,
+    google_service_account.bucket_account,
+  ]
+}
+```
