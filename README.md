@@ -417,3 +417,18 @@ resource "google_cloud_scheduler_job" "job" {
   ]
 }
 ```
+
+### Deploy da infraestrutura
+
+Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com os arquivos do terraform. O primeiro comando a ser executado é o `terraform init` que baixa todos os provedores e plugins necessários.
+
+> [!NOTE]
+> Segue link de instalação do [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+```bash
+> terraform init
+> terraform fmt
+> terraform validate
+> terraform plan
+> terraform apply -auto-approve
+```
