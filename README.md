@@ -125,3 +125,46 @@ secret_value = secret_client.access_secret_version()
 # Exibe o valor do segredo
 print(secret_value)
 ```
+
+## [Armazenar](ingestion_api_gcs/storage.py)
+
+O objetivo do projeto é armazenar os arquivos `.json` provenientes da API, em um bucket do Google Cloud Storage dentro de uma camanda `raw` diariamente. A classe `Storage` facilita a interação com o Google Cloud Storage, permitindo fazer upload de dados JSON diretamente da memória para um bucket. A classe herda de `Cred`, possibilitando a configuração flexível do cliente e das credenciais.
+
+### Funcionalidades
+
+- **Upload de JSON em Memória**: Realiza upload de dados JSON diretamente da memória para um bucket no Google Cloud Storage.
+- **Extensível**: Como herda de `Cred`, a classe permite configurar clientes personalizados e usar credenciais armazenadas de maneira segura, como as recuperadas do Secret Manager.
+
+### Exemplo de Uso
+
+Para fazer o upload de um arquivo JSON diretamente da memória para o Google Cloud Storage, siga o exemplo abaixo:
+
+```python
+# Importa a classe Storage do módulo onde ela está definida
+from storage import Storage
+
+# Define os dados JSON a serem enviados
+data = {
+    "name": "example",
+    "description": "This is a JSON upload example"
+}
+
+# Define o nome do bucket e o caminho do blob
+bucket_name = 'bucket-name'
+blob_name = 'file/blob.json'
+
+# Instancia a classe Storage
+storage_client = Storage()
+
+# Realiza o upload do JSON
+blob = storage_client.upload_json_memory(data, bucket_name, blob_name)
+
+# Confirma o local de armazenamento do JSON
+print(f"JSON uploaded to: gs://{bucket_name}/{blob_name}")
+```
+
+> [!IMPORTANT]
+> A classe Cred desempenha um papel fundamental em ambas as classes Storage e Secret porque ela centraliza a gestão de autenticação
+> e credenciais ao interagir com os serviços da Google Cloud, como o Secret Manager e o Cloud Storage. 
+> Essa classe encapsula a lógica de como as credenciais são gerenciadas e utilizadas para criar clientes autenticados, 
+> garantindo que as operações realizadas nesses serviços sejam seguras e que o código permaneça limpo e reutilizável.
