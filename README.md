@@ -25,6 +25,9 @@ O gatilho de execução será configurado por meio do Cloud Scheduler. Toda a in
 
 ![Pastas](imagens/pastas.png)
 
+- `ingestion_api_gcs` essa pasta contém o código-fonte da função `cloud function` que sera exportado para a nuvem.
+- `terraform` pasta com as configurações e provisionamento da infraestrutura do projeto na nuvem.
+
 ## [Ingestão dos dados](ingestion_api_gcs/ingestion.py)
 
 A ingestão dos dados é feita por meio da classe `Ingestion` que é uma especialização da classe `ApiCurrencyRequests` que fornece métodos específicos para acessar endpoints da API [Free Currency](https://freecurrencyapi.com). Em essência, essa classe facilita a ingestão de dados relacionados a moedas, taxas de câmbio e históricos de variação cambial.
