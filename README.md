@@ -451,13 +451,13 @@ Para iniciar o processo de deploy com o terraform é preciso entrar na pasta com
 A função `insert_json` do arquivo `ingestion_api_gcs/main.py` é uma trigger HTTP que realiza todas as tarefas do projeto.
 
 1. **Autenticação**:
-   - Recupera um token de acesso à API e as credenciais de serviço a partir do Google Secret Manager.
+   - Recupera o token de acesso à API e as credenciais de serviço a partir do Google Secret Manager.
 
 2. **Ingestão de Dados**:
-   - Conecta-se a uma API externa para obter dados de taxa de câmbio com a moeda base definida como BRL.
+   - Conecta-se a API externa para obter dados de taxa de câmbio com a moeda base definida como BRL.
 
 3. **Upload para Google Cloud Storage**:
-   - Salva os dados obtidos em um bucket no Google Cloud Storage, com o nome de arquivo baseado na data e hora atuais.
+   - Salva os dados obtidos no bucket do Google Cloud Storage, com o nome de arquivo baseado na data e hora atuais.
 
 A função automatiza a ingestão e armazenamento de dados de câmbio, utilizando recursos do Google Cloud, como Secret Manager e Cloud Storage.
 
@@ -468,12 +468,10 @@ from ingestion import Ingestion
 import os
 from datetime import datetime
 
-
 project_id = os.getenv('project_id')
 secret_id = os.getenv('secret_id')
 bucket_name = os.getenv('bucket_name')
 secret_id_json = os.getenv('secret_id_json')
-
 
 def insert_json(request):
     
@@ -497,3 +495,11 @@ def insert_json(request):
 
     return "OK"
 ```
+
+## Conclusão
+
+Este projeto demonstra como acessar dados de uma API externa e armazená-los de maneira eficiente no Google Cloud Storage utilizando Python e Terraform. A implementação incluiu o uso de uma Google Cloud Function para automatizar a ingestão e armazenamento de dados, com autenticação segura via Google Secret Manager.
+
+Além disso, a infraestrutura foi provisionada de forma automatizada usando Terraform, garantindo escalabilidade e fácil replicação. Este projeto oferece uma base sólida para soluções de ingestão de dados em nuvem, podendo ser facilmente adaptado para outras APIs ou ambientes de armazenamento.
+
+Com o uso combinado de Python e Terraform, foi possível criar uma pipeline de dados segura e escalável, integrando diferentes serviços do Google Cloud para simplificar o processo de gerenciamento de dados em nuvem.
