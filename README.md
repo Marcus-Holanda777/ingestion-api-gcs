@@ -175,7 +175,7 @@ Toda a infraestrutura do projeto em nuvem, foi configurado e gerenciado pelo ter
 
 ### Recursos implatados com o terraform
 
-Os recusros necessarios para criar o projeto são: Cloud Storage, Secret Manager, Service Account, Scheduler Jobs e Cloud Fuction. Abaixo uma explicação sobre cada arquivo criado e usado pelo terraform para a criação do ambiente em nuvem.
+Os recursos necessarios para criar o projeto são: Cloud Storage, Secret Manager, Service Account, Scheduler Jobs e Cloud Fuction. Abaixo uma explicação sobre cada arquivo criado e usado pelo terraform para a criação do ambiente em nuvem.
 
 - `variables.tf` é usado para definir variáveis que podem ser utilizadas na configuração. Ele torna a infraestrutura mais flexível e reutilizável, separando os valores das configurações.
 
@@ -217,7 +217,7 @@ variable "default_key" {
 > Para usar o terraform com o Google Cloud, antes é preciso instalar e configurar o [gcloud CLI](https://cloud.google.com/sdk/docs/install?hl=pt-br)
 > e configurar a autenticacão no terminal com o comando: 
 > ```
-> gcloud auth aplicativo-default login
+> gcloud auth application-default login
 > ```
 
 ```terraform
